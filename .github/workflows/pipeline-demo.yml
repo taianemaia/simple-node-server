@@ -43,3 +43,15 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simple-node-server:latest
+  deploy-to-render:
+    needs: deploy-to-docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Get or create Render service
+        id: render-service
+        run: |
+          IMAGE_PATH="docker.io/${{ secrets.DOCKERHUB_USERNAME }}/simple-node-server:latest"
+          SERVICE_ID=$(./scripts/render-get-service-id.sh simple-node-server "$IMAGE_PATH")
+          
+          echo "service_id=$SERVICE_ID" >> $GITHUB_OUTPUT
