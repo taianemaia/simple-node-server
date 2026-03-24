@@ -48,10 +48,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Get or create Render service
-        id: render-service
+      - name: Trigger deployment
+        id: trigger-deployment
         run: |
-          IMAGE_PATH="docker.io/${{ secrets.DOCKERHUB_USERNAME }}/simple-node-server:latest"
+          chmod +x ./scripts/render-get-service-id.sh
+          IMAGE_PATH="docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/simple-node-server:latest"
           SERVICE_ID=$(./scripts/render-get-service-id.sh simple-node-server "$IMAGE_PATH")
           
-          echo "service_id=$SERVICE_ID" >> $GITHUB_OUTPUT
+          curl -X POST "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'  
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}          
+      
