@@ -52,13 +52,15 @@ jobs:
         id: trigger-deployment
         run: |
           chmod +x ./scripts/render-get-service-id.sh
-          IMAGE_PATH="docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/simple-node-server:latest"
           SERVICE_ID=$(./scripts/render-get-service-id.sh simple-node-server "docker.io/${DOCKER_HUB_IMAGE_PATH}:latest")
           
-          curl -X POST "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
+          RESPONSE=$(curl -X POST "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{}'  
+            -d '{}')
+          
+          echo "Deployment response:"
+          echo "$RESPONSE"
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}          
       
