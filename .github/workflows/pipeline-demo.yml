@@ -58,9 +58,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{}')
-          
-          echo "Deployment response:"
-          echo "$RESPONSE"
+
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}          
       
